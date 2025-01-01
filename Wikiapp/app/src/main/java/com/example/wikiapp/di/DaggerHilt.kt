@@ -1,0 +1,37 @@
+package com.example.wikiapp.di
+
+import com.example.wikiapp.retrofit.WikipediaApiService
+import com.example.wikiapp.retrofit.WikipediaRepository
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://en.wikipedia.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWikipediaApi(retrofit: Retrofit): WikipediaApiService {
+        return retrofit.create(WikipediaApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWikipediaRepository(api: WikipediaApiService): WikipediaRepository {
+        return WikipediaRepository(api)
+    }
+}
