@@ -1,5 +1,6 @@
 package com.example.wikiapp.viewModel
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,20 +10,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.wikiapp.data.SearchResult
 
 @Composable
 fun WikipediaApp() {
-    // Inject the ViewModel using Hilt
-    val viewModel: WikipediaViewModel = hiltViewModel()
-    val searchResults by viewModel.searchResults.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val errorMessage by viewModel.error.collectAsState()
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "search") {
+        composable("search") {
+            WikipediaSearchScreen(navController = navController)
+        }
+        composable(
+            route = "detail/{title}",
+            arguments = listOf(navArgument("title") { defaultValue = "Unknown" })
+        ) { backStackEntry ->
+            WikipediaDetailScreen(
+                title = backStackEntry.arguments?.getString("title") ?: "Unknown"
+            )
+        }
+    }
+}
 
+
+@Composable
+fun WikipediaSearchScreen(navController: NavController) {
+    val backStackEntry = navController.getBackStackEntry("search")
+    val viewModel: WikipediaViewModel = hiltViewModel(backStackEntry)
+
+    val uiState by viewModel.uiState.collectAsState()
     var query by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // Input field for search
         TextField(
             value = query,
             onValueChange = { query = it },
@@ -31,9 +53,7 @@ fun WikipediaApp() {
         )
 
         Button(
-            onClick = {
-                viewModel.searchWikipedia(query)
-            },
+            onClick = { viewModel.searchWikipedia(query) },
             enabled = query.isNotBlank(),
             modifier = Modifier
                 .padding(vertical = 8.dp)
@@ -42,32 +62,30 @@ fun WikipediaApp() {
             Text("Search")
         }
 
-        // Display loading spinner while fetching data
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.fillMaxSize())
-        } else {
-            // Show error message if any
-            errorMessage?.let {
-                Text(it, color = MaterialTheme.colorScheme.error)
-            }
-
-            // Show search results or no results message
-            if (searchResults.isEmpty()) {
-                Text("No results found", style = MaterialTheme.typography.bodyMedium)
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(searchResults) { result ->
-                        WikipediaResultItem(result)
-                    }
+        when {
+            uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+            uiState.error != null -> Text(uiState.error!!, color = MaterialTheme.colorScheme.error)
+            uiState.searchResults.isEmpty() -> Text("No results found", style = MaterialTheme.typography.bodyMedium)
+            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(uiState.searchResults) { result ->
+                    WikipediaResultItem(result, navController)
                 }
             }
         }
     }
 }
 
+
+
+
 @Composable
-fun WikipediaResultItem(result: SearchResult) {
-    Column(modifier = Modifier.padding(8.dp)) {
+fun WikipediaResultItem(result: SearchResult, navController: NavController) {
+    Column(modifier = Modifier
+        .padding(8.dp)
+        .clickable {
+            navController.navigate("detail/${result.title}")
+
+        }) {
         Text(
             text = result.title,
             style = MaterialTheme.typography.titleMedium,
@@ -79,6 +97,6 @@ fun WikipediaResultItem(result: SearchResult) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth()
         )
-        Divider(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
     }
 }

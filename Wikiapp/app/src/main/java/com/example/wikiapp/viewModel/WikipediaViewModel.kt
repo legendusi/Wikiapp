@@ -1,45 +1,65 @@
 package com.example.wikiapp.viewModel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wikiapp.data.SearchResult
 import com.example.wikiapp.retrofit.WikipediaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import org.jsoup.Jsoup
+
+fun cleanHtml(html: String): String {
+    return Jsoup.parse(html).text()
+}
+
+data class UiState(
+    val searchResults: List<SearchResult> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null
+)
 
 @HiltViewModel
 class WikipediaViewModel @Inject constructor(
-    private val repository: WikipediaRepository
+    private val repository: WikipediaRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _searchResults = MutableStateFlow<List<SearchResult>>(emptyList())
-    val searchResults: StateFlow<List<SearchResult>> = _searchResults
+    // Example usage of SavedStateHandle
+    val someValue: String = savedStateHandle["key"] ?: "Default Value"
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    fun saveValue(value: String) {
+        savedStateHandle["key"] = value
+    }
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = _uiState
 
     fun searchWikipedia(query: String) {
         if (query.isBlank()) return
 
-        _isLoading.value = true
-        _error.value = null
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
             try {
-                _searchResults.value = repository.search(query)
-                if (_searchResults.value.isEmpty()) {
-                    _error.value = "No results found"
+                (delay(300))
+                val results = repository.search(query).map { result ->
+                    result.copy(snippet = cleanHtml(result.snippet))
                 }
+                _uiState.value = _uiState.value.copy(
+                    searchResults = results,
+                    isLoading = false,
+                    error = if (results.isEmpty()) "No results found" else null
+                )
             } catch (e: Exception) {
-                _error.value = "Error occurred while fetching data"
-            } finally {
-                _isLoading.value = false
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message ?: "Error occurred while fetching data"
+                )
             }
         }
     }
