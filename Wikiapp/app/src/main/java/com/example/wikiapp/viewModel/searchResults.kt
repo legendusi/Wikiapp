@@ -16,14 +16,37 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.wikiapp.data.SearchResult
+import com.example.wikiapp.screen.SplashScreen
+import com.example.wikiapp.screen.LoginScreen
+import com.example.wikiapp.screen.RegisterScreen
 
 @Composable
 fun WikipediaApp() {
+    // Initialize the NavController
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "search") {
-        composable("search") {
-            WikipediaSearchScreen(navController = navController)
+
+    // Set up the NavHost with all the composable routes
+    NavHost(navController = navController, startDestination = "splash") {
+        // Splash screen route
+        composable("splash") {
+            SplashScreen(navController = navController)
         }
+
+        // Login screen route
+        composable("login") {
+            LoginScreen(navController = navController)
+        }
+
+        composable("register") {
+            RegisterScreen(navController)
+        }
+
+        // Home screen route
+        composable("home") {
+            WikipediaHomeScreen(navController = navController)
+        }
+
+        // Detail screen route with argument "title"
         composable(
             route = "detail/{title}",
             arguments = listOf(navArgument("title") { defaultValue = "Unknown" })
@@ -37,8 +60,8 @@ fun WikipediaApp() {
 
 
 @Composable
-fun WikipediaSearchScreen(navController: NavController) {
-    val backStackEntry = navController.getBackStackEntry("search")
+fun WikipediaHomeScreen(navController: NavController) {
+    val backStackEntry = navController.getBackStackEntry("home")
     val viewModel: WikipediaViewModel = hiltViewModel(backStackEntry)
 
     val uiState by viewModel.uiState.collectAsState()

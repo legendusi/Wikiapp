@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "792915109678",
+    "project_id": "wikiapp-28bbf",
+    "storage_bucket": "wikiapp-28bbf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792915109678:android:6370e0b0a8c14ca5e93cbf",
+        "android_client_info": {
+          "package_name": "com.example.wikiapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBk5gYS6HZD7Vdy-3EjTa5_38CQkG7F-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
