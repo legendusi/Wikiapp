@@ -1,4 +1,4 @@
-package com.example.wikiapp.screen
+package com.example.wikiapp.authentication
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

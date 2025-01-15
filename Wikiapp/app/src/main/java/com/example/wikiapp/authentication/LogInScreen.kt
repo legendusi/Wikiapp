@@ -1,4 +1,4 @@
-package com.example.wikiapp.screen
+package com.example.wikiapp.authentication
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -94,5 +94,6 @@ fun LoginScreen(navController: NavController) {
         ) {
             Text("Don't have an account? Register here.")
         }
+
     }
 }

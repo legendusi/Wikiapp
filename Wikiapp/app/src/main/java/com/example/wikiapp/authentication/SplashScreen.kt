@@ -1,4 +1,4 @@
-package com.example.wikiapp.screen
+package com.example.wikiapp.authentication
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,12 +15,12 @@ fun SplashScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
-            // Navigate to the Register/Login flow if no user is signed in
+
             navController.navigate("register") {
                 popUpTo("splash") { inclusive = true }
             }
         } else {
-            // Navigate to the Search/Home screen if user is signed in
+
             navController.navigate("home") {
                 popUpTo("splash") { inclusive = true }
             }

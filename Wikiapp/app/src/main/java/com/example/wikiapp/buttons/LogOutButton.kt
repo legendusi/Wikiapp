@@ -14,9 +14,9 @@ fun LogoutButton(navController: NavController) {
     Button(
         onClick = {
             try {
-                auth.signOut() // Sign out the user
+                auth.signOut()
                 navController.navigate("login") {
-                    popUpTo(0) { inclusive = true } // Clear the entire back stack
+                    popUpTo(0) { inclusive = true }
                 }
             } catch (e: Exception) {
                 Log.e("LogoutError", "Error during logout: ${e.message}", e)
