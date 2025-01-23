@@ -12,6 +12,6 @@ interface WikipediaApiService {
         @Query("format") format: String = "json",
         @Query("list") list: String = "search",
         @Query("srsearch") query: String
-    ): Response<WikipediaResponse>  // Return a Response object to handle errors
+    ): Response<WikipediaResponse>
 
 }

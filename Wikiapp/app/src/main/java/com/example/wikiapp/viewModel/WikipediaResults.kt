@@ -13,6 +13,7 @@ import com.example.wikiapp.data.SearchResult
 
 @Composable
 fun WikipediaResultItem(result: SearchResult, navController: NavController) {
+
     Column(
         modifier = Modifier
             .padding(8.dp)

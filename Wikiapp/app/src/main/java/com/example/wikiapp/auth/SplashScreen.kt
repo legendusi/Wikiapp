@@ -1,4 +1,4 @@
-package com.example.wikiapp.authentication
+package com.example.wikiapp.auth
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

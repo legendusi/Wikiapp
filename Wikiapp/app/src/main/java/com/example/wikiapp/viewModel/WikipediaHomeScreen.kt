@@ -34,7 +34,6 @@ fun WikipediaHomeScreen(navController: NavController, viewModel: WikipediaViewMo
     var query by remember { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -77,6 +76,11 @@ fun WikipediaHomeScreen(navController: NavController, viewModel: WikipediaViewMo
             Text("Search")
         }
 
+        Button(
+            onClick = { navController.navigate("saved_pages") } // ✅ Correct route
+        ) {
+            Text("View Offline Pages")
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         when {
@@ -98,4 +102,3 @@ fun WikipediaHomeScreen(navController: NavController, viewModel: WikipediaViewMo
         }
     }
 }
-

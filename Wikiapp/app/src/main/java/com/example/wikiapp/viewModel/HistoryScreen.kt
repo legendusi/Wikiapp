@@ -58,5 +58,6 @@ fun HistoryScreen(navController: NavController, viewModel: WikipediaViewModel) {
                 Text("Back")
             }
         }
+
     }
 }

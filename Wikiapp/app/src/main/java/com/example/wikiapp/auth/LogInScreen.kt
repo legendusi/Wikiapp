@@ -1,4 +1,4 @@
-package com.example.wikiapp.authentication
+package com.example.wikiapp.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
